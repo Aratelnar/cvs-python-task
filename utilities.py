@@ -25,7 +25,7 @@ def repo_dir(repo, *path, mkdir=False):
 def repo_find(path=".", required=True):
     path = os.path.realpath(path)
 
-    if os.path.isdir(os.path.join(path, ".git")):
+    if os.path.isdir(os.path.join(path, ".cvs")):
         return structures.Repository(path)
 
     # If we haven't returned, recurse in parent, if w
