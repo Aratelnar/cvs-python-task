@@ -1,2 +1,0 @@
-class Blob:
-    pass
