@@ -22,16 +22,38 @@ class Tree(CvsObject):
     pass
 
 
+class TreeRecord:
+    def __init__(self, mode, path, sha):
+        self.mode = mode
+        self.path = path
+        self.sha = sha
+
+
 class Commit(CvsObject):
+    fmt=b'commit'
+
+    def deserialize(self, data):
+        self.kvlm = utilities.kvlm_parse(data)
+
+    def serialize(self):
+        return utilities.kvlm_serialize(self.kvlm)
+
+
+class Tag(CvsObject):
     pass
 
 
 class Blob(CvsObject):
-    pass
+    fmt=b'blob'
+
+    def serialize(self):
+        return self.blobdata
+
+    def deserialize(self, data):
+        self.blobdata = data
 
 
 class Repository:
-    ''''''
 
     worktree = None
     cvsdir = None

@@ -1,13 +1,11 @@
 import argparse
-import collections
-import configparser
-import hashlib
 import os
 import re
 import sys
-import zlib
 import difflib
+import utilities
 import init
+import hash
 
 def add_init():
     argsp = argsubparsers.add_parser("init")
@@ -16,19 +14,50 @@ def add_init():
                        nargs='?',
                        default='.')
 
+def add_hash_cat():
+    argsp = argsubparsers.add_parser("cat-file")
+    argsp.add_argument("type",
+                   metavar="type",
+                   choices=["blob", "commit", "tag", "tree"],
+                   help="Specify the type")
+    argsp.add_argument("object",
+                   metavar="object",
+                   help="The object to display") 
+
+def add_hash_hash():
+    argsp = argsubparsers.add_parser("hash-object")
+
+    argsp.add_argument("-t",
+                   metavar="type",
+                   dest="type",
+                   choices=["blob", "commit", "tag", "tree"],
+                   default="blob",
+                   help="Specify the type")
+
+    argsp.add_argument("-w",
+                   dest="write",
+                   action="store_true",
+                   help="Actually write the object into the database")
+
+    argsp.add_argument("path",
+                   help="Read object from <file>")
+
 argparser = argparse.ArgumentParser(description="")
 argsubparsers = argparser.add_subparsers(title="Commands", dest="command")
 argsubparsers.required = True
 add_init()
+add_hash_cat()
+add_hash_hash()
+
 
 def main(argv=sys.argv[1:]):
     args = argparser.parse_args(argv)
 
     if   args.command == "init"         : init.repo_create(args.path)
-    #elif args.command == "cat-file"    : cmd_cat_file(args)
+    elif args.command == "cat-file"     : hash.cat_file(utilities.repo_find(), args.object, fmt=args.type.encode())
     #elif args.command == "checkout"    : cmd_checkout(args)
     #elif args.command == "commit"      : cmd_commit(args)
-    #elif args.command == "hash-object" : cmd_hash_object(args)
+    elif args.command == "hash-object"  : hash.hash_object(args)
     #elif args.command == "add "        : cmd_add(args)
     #elif args.command == "log"         : cmd_log(args)
     #elif args.command == "ls-tree"     : cmd_ls_tree(args)
