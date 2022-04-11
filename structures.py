@@ -45,10 +45,6 @@ class Commit(CvsObject):
         return utilities.kvlm_serialize(self.kvlm)
 
 
-class Tag(CvsObject):
-    pass
-
-
 class Blob(CvsObject):
     fmt=b'blob'
 

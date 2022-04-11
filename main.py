@@ -57,6 +57,23 @@ def add_add():
                        nargs='?',
                        default='.')
 
+def add_tag():
+    argsp = argsubparsers.add_parser("tag")
+    argsp.add_argument("name",
+                    nargs="?",
+                    help="The new tag's name")
+
+    argsp.add_argument("object",
+                    default="HEAD",
+                    nargs="?",
+                    help="The object the new tag will point to")
+
+def add_checkout():
+    argsp = argsubparsers.add_parser("checkout")
+    group = argsp.add_mutually_exclusive_group()
+    group.add_argument("-t", metavar="tag", nargs='?')
+    group.add_argument("commit", metavar="commit", nargs='?')
+
 argparser = argparse.ArgumentParser(description="")
 argsubparsers = argparser.add_subparsers(title="Commands", dest="command")
 argsubparsers.required = True
@@ -65,6 +82,8 @@ add_hash_cat()
 add_hash_hash()
 add_commit()
 add_add()
+add_tag()
+add_checkout()
 
 def main(argv=sys.argv[1:]):
     args = argparser.parse_args(argv)
@@ -82,7 +101,7 @@ def main(argv=sys.argv[1:]):
     #elif args.command == "rev-parse"   : cmd_rev_parse(args)
     #elif args.command == "rm"          : cmd_rm(args)
     #elif args.command == "show-ref"    : cmd_show_ref(args)
-    #elif args.command == "tag"         : cmd_tag(args)
+    elif args.command == "tag"          : cmd_tag(args)
 
 if __name__ == '__main__':
     main()

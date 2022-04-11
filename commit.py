@@ -24,3 +24,6 @@ def get_tree(repo, path):
         break
     tree.items = items
     return utilities.object_write(tree)
+
+def commit():
+    pass
