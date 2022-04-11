@@ -8,6 +8,9 @@ import hashlib
 def repo_path(repo, *path):
     return os.path.join(repo.cvsdir, *path)
 
+def work_path(repo, *path):
+    return os.path.join(repo.worktree, *path)
+
 def repo_file(repo, *path, mkdir=False):
     if repo_dir(repo, *path[:-1], mkdir=mkdir):
         return repo_path(repo, *path)
@@ -39,7 +42,7 @@ def repo_find(path=".", required=True):
         # os.path.join("/", "..") == "/":
         # If parent==path, then path is root.
         if required:
-            raise Exception("No git directory.")
+            raise Exception("No cvs directory.")
         else:
             return None
 
@@ -185,4 +188,42 @@ def kvlm_serialize(kvlm):
     # Append message
     ret += b'\n' + kvlm[b'']
 
+    return ret
+
+def tree_parse_one(raw, start=0):
+    # Find the space terminator of the mode
+    x = raw.find(b' ', start)
+    assert(x-start == 5 or x-start==6)
+
+    # Read the mode
+    mode = raw[start:x]
+
+    # Find the NULL terminator of the path
+    y = raw.find(b' ', x+1)
+    # and read the path
+    path = raw[x+1:y]
+
+    # Read the SHA and convert to an hex string
+    sha = raw[y+1:y+41]
+
+    return y+41, structures.TreeRecord(mode, path, sha)
+
+def tree_parse(raw):
+    pos = 0
+    max = len(raw)
+    ret = list()
+    while pos < max:
+        pos, data = tree_parse_one(raw, pos)
+        ret.append(data)
+
+    return ret
+
+def tree_serialize(obj):
+    ret = b''
+    for i in obj.items:
+        ret += i.mode
+        ret += b' '
+        ret += i.path
+        ret += b' '
+        ret += i.sha
     return ret

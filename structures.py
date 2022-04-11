@@ -19,7 +19,13 @@ class CvsObject:
 
 
 class Tree(CvsObject):
-    pass
+    fmt=b'tree'
+
+    def deserialize(self, data):
+        self.items = utilities.tree_parse(data)
+
+    def serialize(self):
+        return utilities.tree_serialize(self)
 
 
 class TreeRecord:
@@ -63,7 +69,7 @@ class Repository:
         self.worktree = path
         self.cvsdir = os.path.join(path, ".cvs")
 
-        if not (force or os.path.isdir(self.gitdir)):
+        if not (force or os.path.isdir(self.cvsdir)):
             raise Exception("Not a Git repository %s" % path)
 
         # Read configuration file in .git/config

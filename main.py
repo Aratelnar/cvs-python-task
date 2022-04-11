@@ -5,6 +5,7 @@ import sys
 import difflib
 import utilities
 import init
+import commit
 import hash
 
 def add_init():
@@ -42,23 +43,38 @@ def add_hash_hash():
     argsp.add_argument("path",
                    help="Read object from <file>")
 
+def add_commit():
+    argsp = argsubparsers.add_parser("commit")
+    argsp.add_argument("-m",
+                       metavar="message",
+                       nargs='?',
+                       default='')
+
+def add_add():
+    argsp = argsubparsers.add_parser("add")
+    argsp.add_argument("path",
+                       metavar="path",
+                       nargs='?',
+                       default='.')
+
 argparser = argparse.ArgumentParser(description="")
 argsubparsers = argparser.add_subparsers(title="Commands", dest="command")
 argsubparsers.required = True
 add_init()
 add_hash_cat()
 add_hash_hash()
-
+add_commit()
+add_add()
 
 def main(argv=sys.argv[1:]):
     args = argparser.parse_args(argv)
 
     if   args.command == "init"         : init.repo_create(args.path)
-    elif args.command == "cat-file"     : hash.cat_file(utilities.repo_find(), args.object, fmt=args.type.encode())
+    elif args.command == "cat-file"     : hash.cat_file(utilities.repo_find(path='test'), args.object, fmt=args.type.encode())
     #elif args.command == "checkout"    : cmd_checkout(args)
-    #elif args.command == "commit"      : cmd_commit(args)
+    elif args.command == "commit"       : commit.commit(args)
     elif args.command == "hash-object"  : hash.hash_object(args)
-    #elif args.command == "add "        : cmd_add(args)
+    elif args.command == "add"          : commit.add(utilities.repo_find(path='test'), args.path)
     #elif args.command == "log"         : cmd_log(args)
     #elif args.command == "ls-tree"     : cmd_ls_tree(args)
     #elif args.command == "merge"       : cmd_merge(args)
