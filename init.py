@@ -1,4 +1,5 @@
 import os
+import commit
 import structures
 import utilities
 
@@ -30,6 +31,9 @@ def repo_create(path):
     # .git/HEAD
     with open(utilities.repo_file(repo, "HEAD"), "w") as f:
         f.write("ref: refs/heads/master\n")
+
+    with open(utilities.repo_file(repo, "refs/heads/master"), "w") as f:
+        f.write(commit.initial_commit(repo))
 
     with open(utilities.repo_file(repo, "config"), "w") as f:
         config = utilities.repo_default_config()

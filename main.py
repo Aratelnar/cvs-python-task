@@ -46,7 +46,6 @@ def add_hash_hash():
 def add_commit():
     argsp = argsubparsers.add_parser("commit")
     argsp.add_argument("-m",
-                       metavar="message",
                        nargs='?',
                        default='')
 
@@ -91,7 +90,7 @@ def main(argv=sys.argv[1:]):
     if   args.command == "init"         : init.repo_create(args.path)
     elif args.command == "cat-file"     : hash.cat_file(utilities.repo_find(path='test'), args.object, fmt=args.type.encode())
     #elif args.command == "checkout"    : cmd_checkout(args)
-    elif args.command == "commit"       : commit.commit(args)
+    elif args.command == "commit"       : commit.commit(utilities.repo_find(path='test'), args.m)
     elif args.command == "hash-object"  : hash.hash_object(args)
     elif args.command == "add"          : commit.add(utilities.repo_find(path='test'), args.path)
     #elif args.command == "log"         : cmd_log(args)
@@ -105,3 +104,4 @@ def main(argv=sys.argv[1:]):
 
 if __name__ == '__main__':
     main()
+    

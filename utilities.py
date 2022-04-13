@@ -114,7 +114,6 @@ def object_hash(fd, fmt, repo=None):
     # object type found in header.
     if   fmt==b'commit' : obj=structures.Commit(repo, data)
     elif fmt==b'tree'   : obj=structures.Tree(repo, data)
-    elif fmt==b'tag'    : obj=structures.Tag(repo, data)
     elif fmt==b'blob'   : obj=structures.Blob(repo, data)
     else:
         raise Exception("Unknown type %s!" % fmt)

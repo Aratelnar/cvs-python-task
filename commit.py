@@ -1,9 +1,11 @@
+import collections
 import os
 import utilities
 import structures
 
 def add(repo, path):
-    print(get_tree(repo, path))
+    with open(utilities.repo_file(repo, '.lasttree'), 'w') as f:
+        f.write(get_tree(repo, path))
     
 
 def get_tree(repo, path):
@@ -25,5 +27,24 @@ def get_tree(repo, path):
     tree.items = items
     return utilities.object_write(tree)
 
-def commit():
-    pass
+def commit(repo, message):
+    com = create_commit(repo, message)
+    with open(utilities.repo_file(repo, 'HEAD'),'r') as head:
+        with open(utilities.repo_file(repo, head.read()[5:-1]), 'w') as f:
+            f.write(com)
+
+def create_commit(repo, message):
+    commit = structures.Commit(repo)
+    kvlm = collections.OrderedDict()
+    kvlm[b'parent']=utilities.ref_resolve(repo,'HEAD').encode()
+    kvlm[b'tree']=utilities.ref_resolve(repo, '.lasttree').encode()
+    kvlm[b'']=message.encode()
+    commit.kvlm = kvlm
+    return utilities.object_write(commit)
+
+def initial_commit(repo):
+    commit = structures.Commit(repo)
+    kvlm = collections.OrderedDict()
+    kvlm[b'']=b"Initial Commit"
+    commit.kvlm = kvlm
+    return utilities.object_write(commit)
