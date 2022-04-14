@@ -3,6 +3,7 @@ import os
 import re
 import sys
 import difflib
+import tag
 import utilities
 import init
 import commit
@@ -58,6 +59,10 @@ def add_add():
 
 def add_tag():
     argsp = argsubparsers.add_parser("tag")
+    argsp.add_argument("-m",
+                    metavar='msg',
+                    default="")
+
     argsp.add_argument("name",
                     nargs="?",
                     help="The new tag's name")
@@ -100,7 +105,7 @@ def main(argv=sys.argv[1:]):
     #elif args.command == "rev-parse"   : cmd_rev_parse(args)
     #elif args.command == "rm"          : cmd_rm(args)
     #elif args.command == "show-ref"    : cmd_show_ref(args)
-    elif args.command == "tag"          : cmd_tag(args)
+    elif args.command == "tag"          : tag.tag(utilities.repo_find(path='test'), args.name, args.object, args.m)
 
 if __name__ == '__main__':
     main()

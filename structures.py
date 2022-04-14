@@ -35,6 +35,16 @@ class TreeRecord:
         self.sha = sha
 
 
+class Tag(CvsObject):
+    fmt=b'tag'
+
+    def deserialize(self, data):
+        self.kvlm = utilities.kvlm_parse(data)
+
+    def serialize(self):
+        return utilities.kvlm_serialize(self.kvlm)
+
+
 class Commit(CvsObject):
     fmt=b'commit'
 
