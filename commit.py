@@ -5,8 +5,24 @@ import structures
 
 def add(repo, path):
     with open(utilities.repo_file(repo, '.lasttree'), 'w') as f:
-        f.write(get_tree(repo, path))
-    
+        f.write(f'{get_tree(repo, path)}\n')
+    # with open(utilities.repo_file(repo, 'index'), 'w') as index:
+    #         d1 = collections.OrderedDict()
+    #         for line in index.readlines():
+    #             name, sha = line.split()
+    #             d1[name] = sha
+    #
+    #         path = utilities.work_path(repo, path)
+    #         for (dirpath, dirnames, filenames) in os.walk(path):
+    #             for filename in filenames:
+    #                 p = os.path.join(dirpath, filename)
+    #                 with open(p, 'rb') as f:
+    #                     sha = utilities.object_hash(f, b'blob', repo)
+    #                     d[filename] = sha
+    #
+    #         for name, sha in d.items():
+    #             index.write(name + ' ' + sha + '\n')
+
 
 def get_tree(repo, path):
     tree = structures.Tree(repo)
@@ -18,6 +34,7 @@ def get_tree(repo, path):
             with open(p, 'rb') as f:
                 sha = utilities.object_hash(f, b'blob', repo)
                 items.append(structures.TreeRecord(b'000000', p.encode(), sha.encode()))
+
         for dir in dirnames:
             if dir[0] != '.':
                 p = os.path.join(dirpath, dir)
@@ -29,14 +46,14 @@ def get_tree(repo, path):
 
 def commit(repo, message):
     com = create_commit(repo, message)
-    with open(utilities.repo_file(repo, 'HEAD'),'r') as head:
+    with open(utilities.repo_file(repo, 'HEAD'), 'r') as head:
         with open(utilities.repo_file(repo, head.read()[5:-1]), 'w') as f:
-            f.write(com)
+            f.write(f'{com}\n')
 
 def create_commit(repo, message):
     commit = structures.Commit(repo)
     kvlm = collections.OrderedDict()
-    kvlm[b'parent']=utilities.ref_resolve(repo,'HEAD').encode()
+    kvlm[b'parent']=utilities.ref_resolve(repo, 'HEAD').encode()
     kvlm[b'tree']=utilities.ref_resolve(repo, '.lasttree').encode()
     kvlm[b'']=message.encode()
     commit.kvlm = kvlm
