@@ -10,7 +10,8 @@
             "request": "launch",
             "program": "main.py",
             "args": [
-                "add"
+                "add",
+                "."
             ],
             "console": "integratedTerminal",
             "justMyCode": true

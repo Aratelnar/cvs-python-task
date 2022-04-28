@@ -13,7 +13,7 @@ def add(repo, path):
         if str != [b'']:
             it = [(i.split(b' ')[0],i.split(b' ')[1].split(b'\x00')[0],i.split(b'\x00')[1]) for i in str if str != b'']
             for i in it:
-                if i[1] not in (j.path for j in items):
+                if path.encode() not in i[1]:
                     items.append(structures.TreeRecord(i[0], i[1], i[2]))
     with open(utilities.repo_file(repo, 'index'), "wb") as f:
         for i in items:
