@@ -3,5 +3,5 @@ import filecmp
 import os
 import zlib
 
-with open("test/.cvs/index", 'rb') as f:
-    print(f.read())
+with open("test/.cvs/abc", 'w') as f:
+    f.write('test abc')

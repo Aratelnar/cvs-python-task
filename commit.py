@@ -18,7 +18,6 @@ def add(repo, path):
     with open(utilities.repo_file(repo, 'index'), "wb") as f:
         for i in items:
             f.write(f'{i.mode.decode()} {i.path.decode()}\x00{i.sha.decode()}\n'.encode())
-    pass
 
     # with open(utilities.repo_file(repo, 'index'), 'w') as index:
     #         d1 = collections.OrderedDict()
@@ -50,7 +49,7 @@ def get_items(repo, path, items):
         for dir in dirnames:
             if dir[0] != '.':
                 p = os.path.join(dirpath, dir)
-                get_tree(repo, p, items)
+                get_items(repo, p, items)
         break
 
 def commit(repo, message):
@@ -59,7 +58,57 @@ def commit(repo, message):
         with open(utilities.repo_file(repo, head.read()[5:-1]), 'w') as f:
             f.write(f'{com}\n')
 
+class TreeNode:
+    def __init__(self, name):
+        self.name = name
+        self.children = []
+        self.sha = b''
+        self.mode = b'000000'
+
+    def get_sha(self,repo):
+        if self.sha != b'':
+            return self.sha
+        tree = structures.Tree(repo)
+        list = []
+        for i in self.children:
+            list.append(structures.TreeRecord(i.mode, i.name, i.get_sha(repo)))
+        tree.items = list
+        return utilities.object_write(tree).encode()
+
+    def children_names(self):
+        return [i.name for i in self.children]
+
+    def get_child(self, name):
+        list = [(i, i.name) for i in self.children]
+        for j in list:
+            if j[1] == name:
+                return j[0]
+        return None
+    pass
+
+def create_tree(repo):
+    root = TreeNode(".")
+    with open(utilities.repo_file(repo, 'index'), 'rb') as f:
+        str = f.read().split(b'\n')
+        str = str[:-1]
+        for line in str:
+            mode, path, sha = line.split(b' ')[0], line.split(b' ')[1].split(b'\x00')[0], line.split(b'\x00')[1]
+            tokens = path.split(b'\\')
+            place = root
+            for token in tokens:
+                if token == '.':
+                    continue
+                if token not in place.children_names():
+                    place.children.append(TreeNode(token))
+                place = place.get_child(token)
+            place.sha = sha
+    with open(utilities.repo_file(repo, '.lasttree'), 'w') as f:
+        f.write(f'{root.get_sha(repo).decode()}\n')
+                
+    pass
+
 def create_commit(repo, message):
+    create_tree(repo)
     commit = structures.Commit(repo)
     kvlm = collections.OrderedDict()
     kvlm[b'parent']=utilities.ref_resolve(repo, 'HEAD').encode()

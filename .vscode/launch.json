@@ -10,8 +10,9 @@
             "request": "launch",
             "program": "main.py",
             "args": [
-                "add",
-                "."
+                "checkout",
+                "commit",
+                "c938c499601692f82f741995bdd030677c8ad161"
             ],
             "console": "integratedTerminal",
             "justMyCode": true
