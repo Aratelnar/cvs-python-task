@@ -19,6 +19,12 @@ def checkout(repo, type, obj):
         commit = utilities.object_read(repo, tag.kvlm[b'commit'].decode())
         utilities.set_work_dir(repo, repo.worktree, commit.kvlm[b'tree'].decode())
         write_head(repo, tag.kvlm[b'commit'].decode())
+    if type == 'branch':
+        sha = utilities.ref_resolve(repo, f'refs/heads/{obj}')
+        commit = utilities.object_read(repo, sha)
+        utilities.set_work_dir(repo, repo.worktree, commit.kvlm[b'tree'].decode())
+        write_head(repo, f'ref: refs/heads/{obj}')
+    
 
 def write_head(repo, data):
     with open(utilities.repo_file(repo, 'HEAD'), 'w') as f:
