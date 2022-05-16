@@ -8,11 +8,18 @@
             "name": "Python: Текущий файл",
             "type": "python",
             "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "Cvs Debug",
+            "type": "python",
+            "request": "launch",
             "program": "main.py",
             "args": [
-                "checkout",
-                "commit",
-                "c938c499601692f82f741995bdd030677c8ad161"
+                "branch",
+                "-l"
             ],
             "console": "integratedTerminal",
             "justMyCode": true

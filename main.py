@@ -54,6 +54,8 @@ def add_commit():
     argsp.add_argument("-m",
                        nargs='?',
                        default='')
+    argsp.add_argument('-l','--list',
+                       action='store_true')
 
 
 def add_add():
@@ -91,6 +93,8 @@ def add_branch():
                        default="HEAD",
                        nargs="?",
                        help="The object the new tag will point to")
+
+    argsp.add_argument('-l', '--list', action='store_true')
 
 
 def add_checkout():
@@ -139,7 +143,7 @@ def main(argv=sys.argv[1:]):
     elif args.command == "tag":
         tag.tag(utilities.repo_find(path='test'), args.name, args.object, args.m)
     elif args.command == "branch":
-        branch.branch(utilities.repo_find(path='test'), args.name, args.object)
+        branch.branch(utilities.repo_find(path='test'), args.name, args.object, args.list)
 
 
 if __name__ == '__main__':
